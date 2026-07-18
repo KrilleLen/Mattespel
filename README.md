@@ -1,20 +1,45 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Noomis Betaäventyr 🧠✨
 
-# Run and deploy your AI Studio app
+Ett mobilanpassat huvudräkningsspel för Noomi, byggt kring kunskapsområdena i **Matematik Beta (den blå boken)**.
 
-This contains everything you need to run your app locally.
+## Spela
 
-View your app in AI Studio: https://ai.studio/apps/drive/1w32sP4MvUWo79ucH52dzMy0f9l6g17yP
+Spelet är gjort för mobil och bilresor: inga uträkningar på papper behövs. Välj ett område eller blanda allt och spela rundor med 5 eller 10 frågor.
 
-## Run Locally
+## Innehåll
 
-**Prerequisites:**  Node.js
+- bråk och decimalform
+- decimaler och positionssystem
+- avrundning
+- de fyra räknesätten
+- klockan och tidsskillnader
+- medelvärde, median och typvärde
+- multiplikation och division med 10, 100 och 1 000
+- längd, vikt och volym
+- vinklar, area och omkrets
 
+## Spelfunktioner
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- svensk uppläsning av frågorna
+- adaptiv svårighetsgrad
+- ledtrådar
+- mynt, XP, nivåer och streak-bonus
+- klistermärkessamling
+- belöningsbutik för familjebelöningar
+- sparade framsteg på enheten
+- offline-stöd och möjlighet att lägga spelet på hemskärmen
+
+## Testat
+
+Frågemotorn har stresstestats med **13 500 slumpgenererade frågor**. Testet kontrollerar att varje fråga har fyra unika svarsalternativ och att rätt svar alltid finns med.
+
+## Publicera med GitHub Pages
+
+1. Gör repositoryt publikt under **Settings → General → Change repository visibility**.
+2. Gå till **Settings → Pages**.
+3. Välj **Deploy from a branch**, därefter **main** och **/(root)**.
+4. Spara.
+
+Spelet blir därefter tillgängligt på:
+
+`https://krillelen.github.io/Mattespel/`
