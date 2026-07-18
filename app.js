@@ -1,0 +1,1 @@
+(()=>{const q=document.createElement('script');q.src='./questions.js';q.onload=()=>{const g=document.createElement('script');g.src='./game.js';document.head.appendChild(g)};document.head.appendChild(q)})();
