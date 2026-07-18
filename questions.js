@@ -19,9 +19,38 @@
     ];
     function makeOptions(answer, candidates, formatter = normalize) {
       const a = formatter(answer);
-      const pool = candidates.map(formatter).filter(x => x !== a);
-      const unique = [...new Set(pool)];
-      while (unique.length < 3) unique.push(formatter(Number(answer) + unique.length + 1));
+      const unique = [];
+      const add = value => {
+        const formatted = formatter(value);
+        if (formatted !== a && formatted !== 'NaN' && !unique.includes(formatted)) unique.push(formatted);
+      };
+      candidates.forEach(add);
+
+      // Fyll på med rimliga alternativ om slumpen gav dubletter.
+      const raw = String(answer);
+      const fraction = raw.match(/^(-?\d+)\/(\d+)$/);
+      if (fraction) {
+        const numerator = Number(fraction[1]);
+        const denominator = Number(fraction[2]);
+        let step = 1;
+        while (unique.length < 3 && step < 10) {
+          add(`${Math.max(0, numerator-step)}/${denominator}`);
+          if (unique.length < 3) add(`${numerator+step}/${denominator}`);
+          step += 1;
+        }
+      }
+
+      const numberWithSuffix = raw.match(/^(-?\d+(?:[.,]\d+)?)(.*)$/);
+      if (numberWithSuffix) {
+        const numeric = Number(numberWithSuffix[1].replace(',', '.'));
+        const suffix = numberWithSuffix[2];
+        let step = 1;
+        while (unique.length < 3 && Number.isFinite(numeric) && step < 30) {
+          add(`${numeric + step}${suffix}`);
+          if (unique.length < 3) add(`${numeric - step}${suffix}`);
+          step += 1;
+        }
+      }
       return shuffle([a, ...shuffle(unique).slice(0,3)]);
     }
     function question(topic, text, answer, options, hint, spoken, sub='Tryck på rätt svar.') {
@@ -66,9 +95,13 @@
         return question('decimals', `${n}/${den} = ?`, sv(val), opts, `Nämnaren ${den} berättar hur många decimaler du behöver.`, `${n} delat med ${den} är lika med vad?`);
       }
       if (kind === 3) {
-        const values = [rand(1,90)/10, rand(1,900)/100, rand(1,900)/100, rand(1,90)/10].map(x=>Number(x.toFixed(2)));
+        const values = [];
+        while (values.length < 4) {
+          const value = Number((Math.random() < .5 ? rand(1,90)/10 : rand(1,900)/100).toFixed(2));
+          if (!values.includes(value)) values.push(value);
+        }
         const ans=Math.max(...values);
-        return question('decimals','Vilket tal är störst?',sv(ans),values.map(x=>sv(x)),'Jämför först heltalen, sedan tiondelarna.',`Vilket tal är störst: ${values.map(x=>sv(x)).join(', ')}?`,values.map(x=>sv(x)).join(' · '));
+        return question('decimals','Vilket tal är störst?',sv(ans),shuffle(values.map(x=>sv(x))),'Jämför först heltalen, sedan tiondelarna.',`Vilket tal är störst: ${values.map(x=>sv(x)).join(', ')}?`,values.map(x=>sv(x)).join(' · '));
       }
       const a=rand(0,9), b=rand(0,9), c=d>1?rand(0,9):0; const val=a+b/10+c/100;
       const words = `${a} hela, ${b} tiondelar${c?` och ${c} hundradelar`:''}`;
