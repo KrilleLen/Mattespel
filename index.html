@@ -1,34 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Caesar's Math Paintball</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Orbitron:wght@400;700&display=swap');
-      body {
-        margin: 0;
-        overflow: hidden;
-        background-color: #0f0b1e;
-        font-family: 'Orbitron', sans-serif;
-        touch-action: none; /* Prevent mobile scrolling */
-      }
-      canvas {
-        display: block;
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
-  }
-}
-</script>
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#123c73" />
+  <meta name="description" content="Noomis Betaäventyr – ett mobilvänligt huvudräkningsspel baserat på områdena i Matematik Beta." />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <title>Noomis Betaäventyr</title>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
-  <body>
-    <div id="root"></div>
-  <script type="module" src="/index.tsx"></script> </body>
+<body>
+  <main class="app">
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">🧠</div>
+          <div><h1>Noomis Betaäventyr</h1><small>Huvudräkning på resan</small></div>
+        </div>
+        <div class="stats" aria-label="Dina framsteg">
+          <div class="stat"><b id="topCoins">0</b><span>mynt</span></div>
+          <div class="stat"><b id="topLevel">1</b><span>nivå</span></div>
+        </div>
+      </header>
+
+      <section id="homeScreen" class="screen active">
+        <div class="card">
+          <div class="hero">
+            <span class="hero-kicker">🚙 Roadtrip-läge · utan papper</span>
+            <h2>Räkna dig hela vägen till Beta-slottet.</h2>
+            <p>Korta frågor som går att lösa i huvudet. Rätt svar ger mynt, streak-bonus och nya klistermärken.</p>
+            <div id="roadMap" class="road" aria-label="Din väg genom spelet"></div>
+            <button id="startRoundBtn" class="primary">Starta 10-frågorsäventyret</button>
+            <div class="mode-grid">
+              <button id="quickBtn" class="secondary mode"><span><strong>⚡ Snabbrunda</strong><small>5 frågor när resan är skumpig.</small></span><span class="mode-icon">5️⃣</span></button>
+              <button id="shopBtn" class="secondary mode"><span><strong>🎁 Belöningsbutik</strong><small>Byt mynt mot familjebelöningar.</small></span><span class="mode-icon">🪙</span></button>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-head"><h3>Välj träningsområde</h3><button id="mixedBtn">Blanda allt</button></div>
+            <div id="topicChips" class="chips"></div>
+          </div>
+          <div class="section">
+            <div class="section-head"><h3>Dagens uppdrag</h3><button id="stickersBtn">Mina märken</button></div>
+            <div class="mission">
+              <div class="mission-icon">🔥</div>
+              <div class="mission-copy"><b id="missionTitle">Få 5 rätt i rad</b><small id="missionText">0 av 5 klara</small><div class="mini-progress"><span id="missionProgress" style="width:0%"></span></div></div>
+            </div>
+          </div>
+        </div>
+        <p class="tiny-note">Bygger på kunskapsområdena i Matematik Beta. Uppgifterna genereras i spelet och är anpassade för huvudräkning.</p>
+      </section>
+
+      <section id="gameScreen" class="screen">
+        <div class="card game-card">
+          <div class="game-head">
+            <div class="game-head-row">
+              <button id="quitBtn" class="icon-btn" aria-label="Avsluta rundan">✕</button>
+              <div class="game-title"><b id="roundTitle">Betaäventyr</b><small><span id="questionNo">1</span> av <span id="questionTotal">10</span> · <span id="streakLabel">0 i rad</span></small></div>
+              <button id="soundBtn" class="icon-btn" aria-label="Slå av eller på uppläsning">🔊</button>
+            </div>
+            <div class="progress"><span id="roundProgress"></span></div>
+          </div>
+          <div class="question-wrap">
+            <span id="topicPill" class="topic-pill">🔢 Decimaler</span>
+            <div id="questionText" class="question">0,5 + 0,3 = ?</div>
+            <div id="subQuestion" class="subquestion">Tryck på rätt svar.</div>
+            <div id="answers" class="answers"></div>
+          </div>
+          <div class="game-actions">
+            <button id="readBtn" class="secondary">🔊 Läs upp</button>
+            <button id="hintBtn" class="secondary">💡 Ledtråd</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="resultScreen" class="screen">
+        <div class="card result">
+          <div id="resultMedal" class="result-medal">🏆</div>
+          <h2 id="resultTitle">Snyggt jobbat!</h2>
+          <p id="resultText">Du höll huvudet kallt och tog dig ett steg närmare Beta-slottet.</p>
+          <div class="result-grid">
+            <div class="result-stat"><b id="resultCorrect">0/10</b><span>rätt</span></div>
+            <div class="result-stat"><b id="resultCoins">+0</b><span>mynt</span></div>
+            <div class="result-stat"><b id="resultBest">0</b><span>bästa streak</span></div>
+          </div>
+          <div id="rewardBox" class="reward-box"><div class="reward-icon">🎁</div><div><b>Nytt klistermärke!</b><small>Det ligger i din märkessamling.</small></div></div>
+          <div class="result-actions">
+            <button id="playAgainBtn" class="primary">Spela en runda till</button>
+            <button id="homeBtn" class="secondary">Till startsidan</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="feedback" class="feedback" role="status" aria-live="polite"><div id="feedbackCard" class="feedback-card good"><span class="big">✨</span><span id="feedbackText">Rätt!</span></div></div>
+  <div id="confetti" class="confetti" aria-hidden="true"></div>
+
+  <div id="shopSheet" class="sheet" role="dialog" aria-modal="true" aria-label="Belöningsbutik">
+    <div class="sheet-panel"><div class="grab"></div><div class="sheet-title"><h3>🎁 Belöningsbutik</h3><button class="icon-btn close-sheet">✕</button></div><p style="color:#63768a;margin-top:0">Noomi tjänar mynt genom rätt svar. Fråga mamma eller pappa innan en belöning löses in.</p><div id="shopList" class="shop-list"></div></div>
+  </div>
+
+  <div id="stickersSheet" class="sheet" role="dialog" aria-modal="true" aria-label="Klistermärken">
+    <div class="sheet-panel"><div class="grab"></div><div class="sheet-title"><h3>✨ Mina klistermärken</h3><button class="icon-btn close-sheet">✕</button></div><div id="stickersGrid" class="stickers"></div></div>
+  </div>
+
+  <div id="settingsSheet" class="sheet" role="dialog" aria-modal="true" aria-label="Inställningar">
+    <div class="sheet-panel"><div class="grab"></div><div class="sheet-title"><h3>⚙️ Inställningar</h3><button class="icon-btn close-sheet">✕</button></div>
+      <div class="settings-row"><div><b>Automatisk uppläsning</b><small>Frågan läses upp när den visas.</small></div><button id="speechSwitch" class="switch" aria-label="Automatisk uppläsning"></button></div>
+      <div class="settings-row"><div><b>Ljudsignaler</b><small>Korta ljud vid rätt och fel.</small></div><button id="soundSwitch" class="switch on" aria-label="Ljudsignaler"></button></div>
+      <div class="settings-row"><div><b>Nollställ spelet</b><small>Tar bort mynt, nivåer och märken.</small></div><button id="resetBtn" class="secondary">Nollställ</button></div>
+    </div>
+  </div>
+
+  <script src="./app.js" defer></script>
+</body>
 </html>
